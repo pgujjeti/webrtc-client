@@ -163,7 +163,7 @@ class ChatWidget extends LitElement {
       <div class="chat-widget-container ${this.isFormVisible ? 'form-visible' : ''}">
         <button @click="${this.toggleFormVisibility}" class="chat-icon-button"></button>
         <div class="chat-form ${this.isFormVisible ? "":"hidden"}">
-          <phone-element .props=${{caller:'xhoaluu'}}></phone-element>
+          <phone-element .props=${{caller:'caller1'}}></phone-element>
         </div>
       </div>
     `;
