@@ -5,6 +5,7 @@ import {SipConstants} from "../lib";
 const CALL_LABEL = "Call";
 const CALLING_LABEL = "Dialing...";
 const HANGUP_LABEL = "Hang Up";
+const ANSWER_LABEL = "Answer";
 class Phone extends LitElement {
     static styles = css`
       .number-display {
@@ -74,6 +75,10 @@ class Phone extends LitElement {
         background-color: green;
         color: white;
       }
+
+      .red {
+        background-color: #c60921;
+      }
     `;
 
     static get properties() {
@@ -92,6 +97,7 @@ class Phone extends LitElement {
         this.sipClient = this._createSipClient();
         this.callButtionLabel = CALL_LABEL;
         this.isButtonDisabled = true;
+        this.isAnswered = false;
     }
 
     render() {
@@ -128,7 +134,7 @@ class Phone extends LitElement {
                 })}
             </div>
 
-            <button class="call-button" ${this.isButtonDisabled ? "disabled" : ""} @click="${this._handleCall}">
+            <button class="call-button ${this.isAnswered ? "red" : ""}" ${this.isButtonDisabled ? "disabled" : ""} @click="${this._handleCall}">
                 ${this.callButtionLabel}
             </button>
         `;
@@ -137,35 +143,44 @@ class Phone extends LitElement {
     _createSipClient() {
 
         const client = {
-            username: "abcs@hoan.jambonz.one",
-            password: "123457",
+            username: "caller1@pg2.sip.jambonz.cloud",
+            password: "cCaas95",
             name: "Hoan HL"
         }
         const settings = {
             pcConfig: {
                 iceServers: [{urls: ['stun:stun.l.google.com:19302']}],
             },
-            wsUri: "wss://jambonz.org:8443",
+            // wsUri: "wss://jambonz.org:8443",
+            wsUri: "wss://pg2.sip.jambonz.cloud:8443",
         };
         const sipUA = new SipUA(client, settings);
         sipUA.on(SipConstants.UA_CONNECTING, args => {
             console.log(SipConstants.UA_CONNECTING, args);
+            console.log('Connecting...');
         });
         sipUA.on(SipConstants.UA_REGISTERED, args => {
             console.log(SipConstants.UA_REGISTERED, args);
+            console.log('REGISTERED OK!');
             this.isButtonDisabled = false;
         });
         sipUA.on(SipConstants.UA_UNREGISTERED, args => {
             console.log(SipConstants.UA_UNREGISTERED, args);
             this.isButtonDisabled = true;
         });
+        sipUA.on(SipConstants.SESSION_RINGING, args => {
+            console.log(SipConstants.SESSION_RINGING, args);
+            this.callButtionLabel = ANSWER_LABEL;
+        });
         sipUA.on(SipConstants.SESSION_ANSWERED, args => {
             console.log(SipConstants.SESSION_ANSWERED, args);
             this.callButtionLabel = HANGUP_LABEL;
+            this.isAnswered = true;
         });
         sipUA.on(SipConstants.SESSION_ENDED, args => {
             console.log(SipConstants.SESSION_ENDED, args);
             this.callButtionLabel = CALL_LABEL;
+            this.isAnswered = false;
         });
         sipUA.start();
 
@@ -183,6 +198,8 @@ class Phone extends LitElement {
         if (this.callButtionLabel === CALL_LABEL) {
             this.callButtionLabel = CALLING_LABEL;
             this.sipClient.call(this.toNumber);
+        } else if (this.callButtionLabel === ANSWER_LABEL) {
+            this.sipClient.answer();
         } else {
             this.sipClient.terminate(480, "Finished Call");
         }
