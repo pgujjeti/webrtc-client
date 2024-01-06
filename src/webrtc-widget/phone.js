@@ -171,6 +171,7 @@ class Phone extends LitElement {
         sipUA.on(SipConstants.SESSION_RINGING, args => {
             console.log(SipConstants.SESSION_RINGING, args);
             this.callButtionLabel = ANSWER_LABEL;
+            // this.sipClient.answer();
         });
         sipUA.on(SipConstants.SESSION_ANSWERED, args => {
             console.log(SipConstants.SESSION_ANSWERED, args);
