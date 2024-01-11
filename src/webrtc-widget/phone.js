@@ -94,13 +94,15 @@ class Phone extends LitElement {
         super();
         this.props = {};
         this.toNumber = '';
-        this.sipClient = this._createSipClient();
         this.callButtionLabel = CALL_LABEL;
         this.isButtonDisabled = true;
         this.isAnswered = false;
     }
 
     render() {
+        if (!this.sipClient) {
+            this.sipClient = this._createSipClient();
+        }
         return html`
             <div class="number-display">
                 <div class="number-input-container">
@@ -141,18 +143,18 @@ class Phone extends LitElement {
     }
 
     _createSipClient() {
-
+        console.log('Properties:', this.props);
         const client = {
-            username: "caller1@pg2.sip.jambonz.cloud",
-            password: "cCaas95",
-            name: "Hoan HL"
+            username: this.props.caller + "@" + this.props.sipRealm,
+            password: this.props.password,
+            name: this.props.name || this.props.caller
         }
         const settings = {
             pcConfig: {
                 iceServers: [{urls: ['stun:stun.l.google.com:19302']}],
             },
             // wsUri: "wss://jambonz.org:8443",
-            wsUri: "wss://pg2.sip.jambonz.cloud:8443",
+            wsUri: this.props.serverUrl,
         };
         const sipUA = new SipUA(client, settings);
         sipUA.on(SipConstants.UA_CONNECTING, args => {

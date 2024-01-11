@@ -146,6 +146,11 @@ class ChatWidget extends LitElement {
   static get properties() {
     return {
       isFormVisible: { type: Boolean },
+      caller: { type: String },
+      callerName: { type: String },
+      password: { type: String },
+      sipRealm: {type: String},
+      wssUrl: {type: String},
     };
   }
 
@@ -159,11 +164,18 @@ class ChatWidget extends LitElement {
   }
 
   render() {
+    const phoneProps = {
+      caller: this.caller,
+      password: this.password,
+      sipRealm: this.sipRealm,
+      serverUrl: this.wssUrl,
+      name: this.callerName,
+    };
     return html`
       <div class="chat-widget-container ${this.isFormVisible ? 'form-visible' : ''}">
         <button @click="${this.toggleFormVisibility}" class="chat-icon-button"></button>
         <div class="chat-form ${this.isFormVisible ? "":"hidden"}">
-          <phone-element .props=${{caller:'caller1'}}></phone-element>
+          <phone-element .props=${phoneProps}></phone-element>
         </div>
       </div>
     `;
