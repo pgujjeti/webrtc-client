@@ -6,6 +6,7 @@ import css from 'rollup-plugin-lit-css';
 import { terser } from "rollup-plugin-terser";
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   input: 'src/webrtc-widget/webrtc-widget.js',
   output: {
