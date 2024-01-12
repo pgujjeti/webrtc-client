@@ -150,7 +150,8 @@ class ChatWidget extends LitElement {
       callerName: { type: String },
       password: { type: String },
       sipRealm: {type: String},
-      wssUrl: {type: String},
+      wssUrl: { type: String },
+      autoAnswer: { type: Boolean },
     };
   }
 
@@ -170,6 +171,7 @@ class ChatWidget extends LitElement {
       sipRealm: this.sipRealm,
       serverUrl: this.wssUrl,
       name: this.callerName,
+      autoAnswer: this.autoAnswer,
     };
     return html`
       <div class="chat-widget-container ${this.isFormVisible ? 'form-visible' : ''}">
